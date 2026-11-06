@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Use the audiobook speed calculator to estimate listening time, compare playback speeds, track progress, and plan a finish date.">
+    <meta name="theme-color" content="#f7f8f5">
+    <title>Audiobook Speed Calculator | Listening Time &amp; Finish Date</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#calculator">Skip to calculator</a>
+    <header class="site-header">
+      <h1>Audiobook Speed Calculator</h1>
+      <p class="header-description">Enter the original length and playback speed to instantly see your listening time and time saved.</p>
+    </header>
+
+    <aside class="sticky-summary" id="sticky-summary" aria-label="Listening summary">
+      <div class="sticky-inner">
+        <div class="sticky-copy">
+          <span class="eyebrow">Time left</span>
+          <div class="sticky-value">
+            <strong id="sticky-time-left">0 min</strong>
+            <span class="sticky-days" id="sticky-days" hidden></span>
+          </div>
+        </div>
+        <div class="time-bar js-time-bar" role="img" aria-label="Time composition is empty">
+          <span class="time-part heard-segment"></span>
+          <span class="time-part remaining-segment"></span>
+          <span class="time-part saved-segment"></span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="page-shell" id="calculator">
+      <div class="calculator-column">
+        <form class="calculator-form" id="calculator-form" novalidate>
+          <section class="card form-card" aria-labelledby="duration-title">
+            <div class="section-heading">
+              <span class="step-number" aria-hidden="true">01</span>
+              <div>
+                <h2 id="duration-title">Enter the audiobook length</h2>
+                <p>Use the original running time shown in your audiobook app.</p>
+              </div>
+            </div>
+            <div class="length-tabs" role="tablist" aria-label="Audiobook length format">
+              <button class="length-tab is-selected" id="duration-tab" type="button" role="tab" aria-selected="true" aria-controls="duration-panel" tabindex="0" data-mode="duration">Duration</button>
+              <button class="length-tab" id="words-tab" type="button" role="tab" aria-selected="false" aria-controls="words-panel" tabindex="-1" data-mode="words">Word count</button>
+              <button class="length-tab" id="pages-tab" type="button" role="tab" aria-selected="false" aria-controls="pages-panel" tabindex="-1" data-mode="pages">Pages</button>
+            </div>
+            <input id="length-mode" name="mode" type="hidden" value="duration">
+            <div class="length-panel" id="duration-panel" role="tabpanel" aria-labelledby="duration-tab" tabindex="0">
+              <div class="duration-grid">
+                <label class="number-field">
+                  <span>Hours</span>
+                  <input id="total-hours" name="hours" type="number" min="0" step="1" inputmode="numeric" value="10" autocomplete="off">
+                </label>
+                <label class="number-field">
+                  <span>Minutes</span>
+                  <input id="total-minutes" name="minutes" type="number" min="0" step="1" inputmode="numeric" value="0" autocomplete="off">
+                </label>
+                <label class="number-field">
+                  <span>Seconds</span>
+                  <input id="total-seconds" name="seconds" type="number" min="0" step="1" inputmode="numeric" value="0" autocomplete="off">
+                </label>
+              </div>
+            </div>
+            <div class="length-panel" id="words-panel" role="tabpanel" aria-labelledby="words-tab" tabindex="0" hidden>
+              <div class="duration-grid single-field-grid">
+                <label class="number-field">
+                  <span>Total words</span>
+                  <input id="total-words" name="words" type="number" min="1" step="1" inputmode="numeric" value="10000">
+                </label>
+              </div>
+              <p class="mode-hint">Estimate audio length from the word count and reading speed below.</p>
+            </div>
+            <div class="length-panel" id="pages-panel" role="tabpanel" aria-labelledby="pages-tab" tabindex="0" hidden>
+              <div class="duration-grid two-field-grid">
+                <label class="number-field">
+                  <span>Total pages</span>
+                  <input id="total-pages" name="pages" type="number" min="1" step="1" inputmode="numeric" value="100">
+                </label>
+                <label class="number-field">
+                  <span>Words per page</span>
+                  <input id="words-per-page" name="wordsPerPage" type="number" min="1" step="1" inputmode="numeric" value="300">
+                </label>
+              </div>
+              <p class="mode-hint">Estimate audio length from pages, words per page, and reading speed.</p>
+            </div>
+            <label class="number-field reading-speed-field" id="reading-speed-field" for="reading-speed" hidden>
+              <span>Average reading speed (words/min)</span>
+              <input id="reading-speed" name="readingSpeed" type="number" min="1" step="any" inputmode="decimal" value="150">
+            </label>
+
+            <div class="divider"></div>
+
+            <div class="section-heading speed-heading">
+              <span class="step-number" aria-hidden="true">02</span>
+              <div>
+                <h2 id="speed-title">Choose a playback speed</h2>
+                <p>Pick a preset or enter a custom speed in the same field.</p>
+              </div>
+            </div>
+            <label class="number-field speed-field" for="playback-speed">
+              <span>Playback speed</span>
+              <span class="speed-input-wrap">
+                <input id="playback-speed" name="speed" type="number" min="0.01" step="any" inputmode="decimal" value="1" aria-describedby="speed-hint">
+                <span aria-hidden="true">×</span>
+              </span>
+            </label>
+            <p class="field-hint" id="speed-hint">Your estimate updates as soon as you change a value.</p>
+            <div class="preset-list" role="group" aria-label="Playback speed presets">
+              <button class="preset-button is-selected" type="button" data-speed="1" aria-pressed="true">1×</button>
+              <button class="preset-button" type="button" data-speed="1.25" aria-pressed="false">1.25×</button>
+              <button class="preset-button" type="button" data-speed="1.35" aria-pressed="false">1.35×</button>
+              <button class="preset-button" type="button" data-speed="1.5" aria-pressed="false">1.5×</button>
+              <button class="preset-button" type="button" data-speed="1.75" aria-pressed="false">1.75×</button>
+              <button class="preset-button" type="button" data-speed="2" aria-pressed="false">2×</button>
+              <button class="preset-button" type="button" data-speed="3" aria-pressed="false">3×</button>
+              <button class="preset-button custom-preset" type="button" data-speed="custom" aria-pressed="false">Custom</button>
+            </div>
+            <p class="validation-message" id="core-message" aria-live="polite"></p>
+          </section>
+
+          <section class="optional-card" aria-label="Optional listening details">
+            <button class="disclosure-button" id="progress-toggle" type="button" aria-expanded="false" aria-controls="progress-panel">
+              <span class="disclosure-icon" aria-hidden="true">+</span>
+              <span class="disclosure-copy"><strong>How long have you listened?</strong><span>Enter the time you have already listened to.</span></span>
+              <span class="disclosure-state" aria-hidden="true">Optional</span>
+            </button>
+            <div class="disclosure-panel" id="progress-panel" aria-hidden="true" inert>
+              <div class="disclosure-inner">
+                <p class="panel-intro">Enter how much of the original audiobook you have already finished.</p>
+                <div class="duration-grid compact-grid">
+                  <label class="number-field">
+                    <span>Hours</span>
+                    <input id="progress-hours" name="progressHours" type="number" min="0" step="1" inputmode="numeric" autocomplete="off">
+                  </label>
+                  <label class="number-field">
+                    <span>Minutes</span>
+                    <input id="progress-minutes" name="progressMinutes" type="number" min="0" step="1" inputmode="numeric" autocomplete="off">
+                  </label>
+                  <label class="number-field">
+                    <span>Seconds</span>
+                    <input id="progress-seconds" name="progressSeconds" type="number" min="0" step="1" inputmode="numeric" autocomplete="off">
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="optional-card" aria-label="Optional daily listening plan">
+            <button class="disclosure-button" id="daily-toggle" type="button" aria-expanded="false" aria-controls="daily-panel">
+              <span class="disclosure-icon" aria-hidden="true">+</span>
+              <span class="disclosure-copy"><strong>How long do you plan to listen each day?</strong><span>Enter your planned listening time per day.</span></span>
+              <span class="disclosure-state" aria-hidden="true">Optional</span>
+            </button>
+            <div class="disclosure-panel" id="daily-panel" aria-hidden="true" inert>
+              <div class="disclosure-inner">
+                <p class="panel-intro">This is time spent listening each day, at your chosen playback speed.</p>
+                <div class="duration-grid compact-grid">
+                  <label class="number-field">
+                    <span>Hours</span>
+                    <input id="daily-hours" name="dailyHours" type="number" min="0" step="1" inputmode="numeric" autocomplete="off">
+                  </label>
+                  <label class="number-field">
+                    <span>Minutes</span>
+                    <input id="daily-minutes" name="dailyMinutes" type="number" min="0" step="1" inputmode="numeric" autocomplete="off">
+                  </label>
+                  <label class="number-field">
+                    <span>Seconds</span>
+                    <input id="daily-seconds" name="dailySeconds" type="number" min="0" step="1" inputmode="numeric" autocomplete="off">
+                  </label>
+                </div>
+                <p class="validation-message daily-message" id="daily-message" aria-live="polite"></p>
+              </div>
+            </div>
+          </section>
+        </form>
+
+        <section class="card result-card" id="result-card" aria-labelledby="result-title" hidden>
+          <div class="result-topline">
+            <h2 class="eyebrow result-label" id="result-title">Your listening estimate</h2>
+            <div class="finish-date" id="finish-date" hidden>
+              <span id="finish-date-label"></span>
+              <strong id="finish-date-value"></strong>
+            </div>
+          </div>
+          <div class="estimate-row">
+            <div class="estimate-metric">
+              <span>Time left</span>
+              <strong id="result-time-left" aria-live="polite"></strong>
+            </div>
+            <div class="estimate-metric">
+              <span id="time-change-label">Time saved</span>
+              <div class="estimate-value">
+                <strong id="result-time-change"></strong>
+                <span class="percent-pill" id="time-change-percent"></span>
+              </div>
+            </div>
+          </div>
+          <div class="progress-block result-progress">
+            <div class="progress-heading">
+              <span class="progress-context">Time composition</span>
+              <strong class="js-progress-percent"></strong>
+            </div>
+            <div class="time-bar js-time-bar" role="img" aria-label="Time composition">
+              <span class="time-part heard-segment"></span>
+              <span class="time-part remaining-segment"></span>
+              <span class="time-part saved-segment"></span>
+            </div>
+          </div>
+          <ul class="bar-legend" aria-label="Time breakdown">
+            <li><span class="legend-swatch heard-swatch" aria-hidden="true"></span>Already listened</li>
+            <li><span class="legend-swatch remaining-swatch" aria-hidden="true"></span>Listening time left</li>
+            <li><span class="legend-swatch saved-swatch" aria-hidden="true"></span>Time saved</li>
+          </ul>
+          <div class="calculation-notes">
+            <p class="calculation-formula">Listening time = Original duration ÷ Playback speed</p>
+            <p>Example: 8 hours ÷ 1.5 = 5 hours 20 minutes, saving 2 hours 40 minutes.</p>
+            <p id="time-left-formula" hidden>Time left = (Original duration − Original progress) ÷ Playback speed</p>
+          </div>
+        </section>
+
+        <section class="card comparison-card" id="comparison-card" aria-labelledby="comparison-title" hidden>
+          <div class="section-heading table-heading">
+            <span class="step-number" aria-hidden="true">↗</span>
+            <div>
+              <h2 id="comparison-title">Compare listening speeds</h2>
+              <p>The audiobook speed calculator compares speeds using the time left from your current place.</p>
+            </div>
+          </div>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Listening speed comparison table">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Playback speed</th>
+                  <th scope="col">Listening time</th>
+                  <th scope="col">Time saved vs 1×</th>
+                </tr>
+              </thead>
+              <tbody id="comparison-rows"></tbody>
+            </table>
+          </div>
+          <p class="table-note">Speeds below 1× show extra time. Estimates round up to the next second.</p>
+        </section>
+
+        <section class="reference-section" aria-labelledby="reference-title">
+          <div class="reference-heading">
+            <p class="eyebrow">Original duration examples</p>
+            <h2 id="reference-title">Audiobook speed calculator reference tables</h2>
+            <p>Each table uses the full original duration, in half-hour steps from 0.5 to 40 hours. These are reference examples, not calculator input limits; estimates round up to the next second.</p>
+          </div>
+          <div class="reference-tables">
+            <section class="reference-table-section" data-reference-speed="0.75" aria-labelledby="reference-075-title">
+              <h3 id="reference-075-title">0.75× playback speed</h3>
+              <div class="table-scroll" tabindex="0" role="region" aria-label="0.75 times audiobook speed reference table">
+                <table class="reference-table">
+                  <thead><tr><th scope="col">Original duration (h / min / sec)</th><th scope="col">Listening time</th><th scope="col">Time saved vs 1×</th></tr></thead>
+                  <tbody data-reference-rows></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="reference-table-section" data-reference-speed="1" aria-labelledby="reference-1-title">
+              <h3 id="reference-1-title">1.0× playback speed</h3>
+              <div class="table-scroll" tabindex="0" role="region" aria-label="1 times audiobook speed reference table">
+                <table class="reference-table">
+                  <thead><tr><th scope="col">Original duration (h / min / sec)</th><th scope="col">Listening time</th><th scope="col">Time saved vs 1×</th></tr></thead>
+                  <tbody data-reference-rows></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="reference-table-section" data-reference-speed="1.25" aria-labelledby="reference-125-title">
+              <h3 id="reference-125-title">1.25× playback speed</h3>
+              <div class="table-scroll" tabindex="0" role="region" aria-label="1.25 times audiobook speed reference table">
+                <table class="reference-table">
+                  <thead><tr><th scope="col">Original duration (h / min / sec)</th><th scope="col">Listening time</th><th scope="col">Time saved vs 1×</th></tr></thead>
+                  <tbody data-reference-rows></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="reference-table-section" data-reference-speed="1.35" aria-labelledby="reference-135-title">
+              <h3 id="reference-135-title">1.35× playback speed</h3>
+              <div class="table-scroll" tabindex="0" role="region" aria-label="1.35 times audiobook speed reference table">
+                <table class="reference-table">
+                  <thead><tr><th scope="col">Original duration (h / min / sec)</th><th scope="col">Listening time</th><th scope="col">Time saved vs 1×</th></tr></thead>
+                  <tbody data-reference-rows></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="reference-table-section" data-reference-speed="1.5" aria-labelledby="reference-15-title">
+              <h3 id="reference-15-title">1.5× playback speed</h3>
+              <div class="table-scroll" tabindex="0" role="region" aria-label="1.5 times audiobook speed reference table">
+                <table class="reference-table">
+                  <thead><tr><th scope="col">Original duration (h / min / sec)</th><th scope="col">Listening time</th><th scope="col">Time saved vs 1×</th></tr></thead>
+                  <tbody data-reference-rows></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="reference-table-section" data-reference-speed="1.75" aria-labelledby="reference-175-title">
+              <h3 id="reference-175-title">1.75× playback speed</h3>
+              <div class="table-scroll" tabindex="0" role="region" aria-label="1.75 times audiobook speed reference table">
+                <table class="reference-table">
+                  <thead><tr><th scope="col">Original duration (h / min / sec)</th><th scope="col">Listening time</th><th scope="col">Time saved vs 1×</th></tr></thead>
+                  <tbody data-reference-rows></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="reference-table-section" data-reference-speed="2" aria-labelledby="reference-2-title">
+              <h3 id="reference-2-title">2.0× playback speed</h3>
+              <div class="table-scroll" tabindex="0" role="region" aria-label="2 times audiobook speed reference table">
+                <table class="reference-table">
+                  <thead><tr><th scope="col">Original duration (h / min / sec)</th><th scope="col">Listening time</th><th scope="col">Time saved vs 1×</th></tr></thead>
+                  <tbody data-reference-rows></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="reference-table-section" data-reference-speed="2.5" aria-labelledby="reference-25-title">
+              <h3 id="reference-25-title">2.5× playback speed</h3>
+              <div class="table-scroll" tabindex="0" role="region" aria-label="2.5 times audiobook speed reference table">
+                <table class="reference-table">
+                  <thead><tr><th scope="col">Original duration (h / min / sec)</th><th scope="col">Listening time</th><th scope="col">Time saved vs 1×</th></tr></thead>
+                  <tbody data-reference-rows></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="faq" aria-labelledby="faq-title">
+          <div class="faq-intro">
+            <p class="eyebrow">A few details to help you plan</p>
+            <h2 id="faq-title">Frequently asked questions</h2>
+            <p>Use this audiobook speed calculator for fixed-length podcasts, YouTube videos, and course recordings when you know the original duration and playback speed. Player speed limits differ across platforms, devices, and versions. Estimates cover one uninterrupted listen and exclude pauses, rewinds, ads, and skipped sections.</p>
+          </div>
+          <details>
+            <summary>How much time do 1.25× and 1.35× speeds save?</summary>
+            <p>The savings percentage is (1 − 1 ÷ speed) × 100%. At 1.25×, that is 20%: a 7-hour audiobook takes 5 hours 36 minutes, saving 1 hour 24 minutes. At 1.35×, it is about 25.93%: a 3-hour audiobook takes 2 hours 13 minutes 20 seconds, saving 46 minutes 40 seconds. At either speed, this audiobook speed calculator rounds displayed estimates up to the next second.</p>
+          </details>
+          <details>
+            <summary>How long are 9-hour and 11-hour audiobooks at 1.5×?</summary>
+            <p>At 1.5×, a 9-hour audiobook takes 6 hours, saving 3 hours. An 11-hour audiobook takes 7 hours 20 minutes, saving 3 hours 40 minutes. If you have already listened, subtract your position in the original book from its full duration, then divide the remainder by speed. Progress measures the book position, not the time spent listening.</p>
+          </details>
+          <details>
+            <summary>Does listening at 2× affect comprehension?</summary>
+            <p>Comprehension varies with the material, narration, language familiarity, and listener. A <a href="https://newsroom.ucla.edu/releases/learning-while-speed-watching-class-videos">UCLA study of recorded class lectures</a> found little difference in tested comprehension up to 2×, while results were lower at 2.5×; it does not predict the same outcome for audiobooks or every person. Try a comfortable speed and slow down for dense passages. The audiobook speed calculator estimates duration, not individual comprehension.</p>
+          </details>
+          <details>
+            <summary>Which playback speeds does Audible support?</summary>
+            <p>Audible's <a href="https://www.audible.com/ep/NarrationSpeed">Cloud Player lists 31 settings</a> from 0.5× to 3.5× in 0.1 steps: 0.5×, 0.6×, 0.7×, 0.8×, 0.9×, 1.0×, 1.1×, 1.2×, 1.3×, 1.4×, 1.5×, 1.6×, 1.7×, 1.8×, 1.9×, 2.0×, 2.1×, 2.2×, 2.3×, 2.4×, 2.5×, 2.6×, 2.7×, 2.8×, 2.9×, 3.0×, 3.1×, 3.2×, 3.3×, 3.4×, and 3.5×. The Audible app lets you choose Speed in the player, while exact controls may vary by device or version. For comparison, the audiobook speed calculator accepts a custom number; that does not mean Audible offers every possible value.</p>
+          </details>
+          <details>
+            <summary>How do I calculate time left and listening progress?</summary>
+            <p>Time left = (original duration − original progress) ÷ playback speed. Progress percentage = original progress ÷ original duration × 100%. For a 10-hour book with 2 hours heard, progress is 20%; at 1.5×, the remaining 8 hours take 5 hours 20 minutes. The audiobook speed calculator treats progress as book position and divides only the remaining duration.</p>
+          </details>
+          <details>
+            <summary>How do audiobook hours convert to pages?</summary>
+            <p>A page count is only a rough estimate: original hours × 60 × words per minute ÷ words per page. With 150 spoken words per minute and 300 words per page, a 2-hour audiobook is about 60 pages. Editions, layout, and narration vary. For a page estimate, restore the book's original duration first; an audiobook speed calculator cannot identify a specific edition's pagination.</p>
+          </details>
+          <details>
+            <summary>Can I use this calculator for podcasts, YouTube, and courses?</summary>
+            <p>Yes, if the podcast, YouTube video, or course recording has a known duration and the player offers the speed you want. Enter its 1× duration and actual playback setting. The calculator assumes one uninterrupted listen; it cannot predict live streams or add pauses, rewinds, ads, or skipped segments. This audiobook speed calculator can estimate fixed-length audio or video.</p>
+          </details>
+          <details>
+            <summary>Does changing playback speed change the pitch?</summary>
+            <p>Some audio players preserve pitch while changing speed; others may let pitch rise or fall. The setting and audio processing depend on the player, and very high rates can sound distorted. <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/preservesPitch">Browser media documentation</a> describes pitch preservation as a separate playback setting, but that does not guarantee identical behavior in audiobook apps. An audiobook speed calculator divides duration; it does not process audio.</p>
+          </details>
+          <details>
+            <summary>Why does my result differ from my player's time display?</summary>
+            <p>Check that the original duration, playback speed, and position match, and that both displays refer to the same scope, such as a whole title or one chapter. An audiobook speed calculator rounds estimates up to the next second; a player's live countdown may also reflect pauses, silence skipping, ads, and chapter boundaries. Rewinds can further change the result from a simple full-duration estimate.</p>
+          </details>
+          <details>
+            <summary>Is an audiobook membership cheaper than buying individual books?</summary>
+            <p>Compare actual costs for your listening pattern: divide the membership fee by the number of books you finish, then compare that per-book figure with individual purchase prices. Consider included titles, credits, discounts, and how access changes after cancellation. Audible says <a href="https://help.audible.com/s/article/cancel-membership?language=en_US">purchased titles remain accessible</a>, while included-catalog access and unused credits may end. Plan prices and benefits vary by region and can change, so compare current local terms before deciding.</p>
+          </details>
+        </section>
+      </div>
+    </main>
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>
