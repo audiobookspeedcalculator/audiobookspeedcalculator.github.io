@@ -54,22 +54,6 @@ test("adds the English page explanation and formula example inside the result ca
   assert.match(html, /Time left = \(Original duration − Original progress\) ÷ Playback speed/);
 });
 
-test("includes eight complete reference table shells with independent speed headings", () => {
-  const speeds = [...html.matchAll(/<section\b[^>]*data-reference-speed="([^"]+)"[^>]*>/g)]
-    .map((match) => match[1]);
-  assert.deepEqual(speeds, ["0.75", "1", "1.25", "1.35", "1.5", "1.75", "2", "2.5"]);
-
-  for (const speed of speeds) {
-    const section = html.match(new RegExp(`<section\\b[^>]*data-reference-speed="${speed}"[^>]*>[\\s\\S]*?<\\/section>`));
-    assert.ok(section, `reference table at ${speed}× exists`);
-    const headingSpeed = speed === "1" ? "1.0" : speed === "2" ? "2.0" : speed;
-    assert.match(section[0], new RegExp(`<h3[^>]*>${headingSpeed.replace(".", "\\.")}× playback speed<\\/h3>`, "i"));
-    assert.match(section[0], /Original duration/);
-    assert.match(section[0], /Listening time/);
-    assert.match(section[0], /Time saved vs 1×/);
-  }
-});
-
 test("ships ten collapsed FAQ entries with 40 to 80 English words per answer", () => {
   const entries = [...html.matchAll(/<details\b([^>]*)>([\s\S]*?)<\/details>/g)];
   assert.equal(entries.length, 10);

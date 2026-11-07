@@ -272,7 +272,6 @@ button {
 }
 
 .section-heading h2,
-.reference-heading h2,
 .faq h2 {
   margin: 0;
   color: var(--ink);
@@ -870,56 +869,10 @@ tbody tr.is-current th {
   font-size: .72rem;
 }
 
-.reference-section {
-  margin-top: .85rem;
-  padding: 28px 2px 0;
-}
-
-.reference-heading {
-  max-width: 620px;
-  margin-bottom: 1.3rem;
-}
-
-.reference-heading h2 {
-  font-size: clamp(1.6rem, 4vw, 2.1rem);
-  letter-spacing: -.045em;
-}
-
-.reference-heading > p:last-child,
 .faq-intro > p:last-child {
   margin: .72rem 0 0;
   color: #68766d;
   font-size: .94rem;
-}
-
-.reference-tables {
-  display: grid;
-  gap: .9rem;
-}
-
-.reference-table-section {
-  min-width: 0;
-  padding: 1rem;
-  border: 1px solid #e1e8e1;
-  border-radius: .9rem;
-  background: rgb(255 255 255 / 78%);
-}
-
-.reference-table-section h3 {
-  margin: 0 0 .75rem;
-  color: #31463a;
-  font-size: .98rem;
-  letter-spacing: -.015em;
-}
-
-.reference-table {
-  min-width: 560px;
-}
-
-.reference-table th,
-.reference-table td {
-  padding: .58rem .7rem;
-  font-size: .77rem;
 }
 
 .faq {
@@ -1046,13 +999,6 @@ tbody tr.is-current th {
     width: 100%;
   }
 
-  .reference-table-section {
-    padding: .8rem;
-  }
-
-  .reference-section {
-    padding-top: 22px;
-  }
 }
 
 @media (max-width: 360px) {

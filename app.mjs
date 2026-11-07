@@ -1,4 +1,4 @@
-import { buildComparison, calculateAudiobook, PRESET_SPEEDS, REFERENCE_SPEEDS } from "./calculator.mjs";
+import { buildComparison, calculateAudiobook, PRESET_SPEEDS } from "./calculator.mjs";
 
 const form = document.querySelector("#calculator-form");
 const speedInput = document.querySelector("#playback-speed");
@@ -194,32 +194,6 @@ function renderComparison(rows, currentSpeed) {
   body.replaceChildren(fragment);
 }
 
-function renderReferenceTables() {
-  for (const speed of REFERENCE_SPEEDS) {
-    const table = document.querySelector(`[data-reference-speed="${speed}"]`);
-    const body = table.querySelector("[data-reference-rows]");
-    const fragment = document.createDocumentFragment();
-
-    for (let originalSeconds = 30 * 60; originalSeconds <= 40 * 3_600; originalSeconds += 30 * 60) {
-      const row = buildComparison(originalSeconds, [speed])[0];
-      const tr = document.createElement("tr");
-      const originalCell = document.createElement("th");
-      originalCell.scope = "row";
-      originalCell.textContent = formatDuration(originalSeconds, true);
-      const listeningCell = document.createElement("td");
-      listeningCell.textContent = formatDuration(row.listeningSeconds, true);
-      const savedCell = document.createElement("td");
-      savedCell.textContent = row.savedSeconds < 0
-        ? `${formatDuration(-row.savedSeconds, true)} extra time`
-        : formatDuration(row.savedSeconds, true);
-      tr.append(originalCell, listeningCell, savedCell);
-      fragment.append(tr);
-    }
-
-    body.replaceChildren(fragment);
-  }
-}
-
 function renderSchedule(result) {
   const message = document.querySelector("#daily-message");
   const finishDate = document.querySelector("#finish-date");
@@ -329,5 +303,4 @@ for (const button of presetButtons) {
 
 connectDisclosure("#progress-toggle", "#progress-panel");
 connectDisclosure("#daily-toggle", "#daily-panel");
-renderReferenceTables();
 update();
