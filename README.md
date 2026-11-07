@@ -7,9 +7,9 @@ A small, dependency-free static page for estimating audiobook listening time, pr
 From the project root, run:
 
 ```sh
-python3 -m http.server 4174 --bind 127.0.0.1 --directory site/dist
+python3 -m http.server 4174 --bind 127.0.0.1
 ```
 
 Then open <http://127.0.0.1:4174>.
 
-The page uses native HTML, CSS, and JavaScript modules. It has no build step or third-party runtime requests.
+The root `index.html` uses native HTML, CSS, and JavaScript modules. It has no backend, build step, or third-party runtime requests.

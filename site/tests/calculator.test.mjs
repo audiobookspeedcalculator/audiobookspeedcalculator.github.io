@@ -5,7 +5,7 @@ import {
   calculateAudiobook,
   PRESET_SPEEDS,
   REFERENCE_SPEEDS,
-} from "../dist/calculator.mjs";
+} from "../../calculator.mjs";
 
 const today = new Date(2026, 10, 30);
 
